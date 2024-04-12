@@ -1,7 +1,6 @@
 package com.time3.api.domains.Auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,7 +12,6 @@ import com.time3.api.domains.Auth.dtos.LoginDto;
 import com.time3.api.domains.Auth.dtos.LoginResponseDto;
 import com.time3.api.domains.User.User;
 import com.time3.api.domains.User.UserRepository;
-import com.time3.api.domains.User.UserRolesEnum;
 import com.time3.api.domains.User.dtos.RegisterDto;
 
 @Service
@@ -39,10 +37,10 @@ public class AuthenticationUseCases {
         return new LoginResponseDto(token);
     }
 
-    public void register(RegisterDto data) throws NotFoundException {
+    public void register(RegisterDto data) {
 
         if (this.repository.findByEmail(data.email()) != null)
-            throw new NotFoundException();
+            throw new AuthenticationException.UserAlreadyExists();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
 
