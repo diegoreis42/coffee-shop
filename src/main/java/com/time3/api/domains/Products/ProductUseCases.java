@@ -14,7 +14,9 @@ public class ProductUseCases {
 
     @Transactional
     public void create(ProductDto productDto) {
-        repository.findByName(productDto.name());
+        repository.findByName(productDto.name()).ifPresent(product -> {
+            throw new ProductException.ProductAlreadyExists();
+        });
 
         repository
                 .save(new Product(productDto.name(), productDto.description(), productDto.price(), productDto.stock()));
