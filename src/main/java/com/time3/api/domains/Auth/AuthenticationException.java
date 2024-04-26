@@ -16,4 +16,18 @@ public class AuthenticationException extends GlobalException {
         }
     }
 
+    public static class JwtException extends AuthenticationException {
+        public JwtException() {
+            super("Token inválido", HttpStatus.FORBIDDEN);
+        }
+
+        public JwtException(String message) {
+            super(message, HttpStatus.FORBIDDEN);
+        }
+
+        public JwtException(String message, HttpStatus httpStatus) {
+            super(message, httpStatus);
+        }
+    }
+
 }
