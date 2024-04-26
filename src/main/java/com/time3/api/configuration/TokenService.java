@@ -11,6 +11,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.time3.api.domains.Auth.AuthenticationException;
 import com.time3.api.domains.User.User;
 
 @Service
@@ -44,7 +45,7 @@ public class TokenService {
                     .getSubject();
 
         } catch (JWTVerificationException e) {
-            return "";
+            throw new AuthenticationException.JwtException(e.getMessage());
         }
     }
 
