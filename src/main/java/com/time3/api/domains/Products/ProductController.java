@@ -40,11 +40,10 @@ public class ProductController {
         return ResponseEntity.ok().body(useCases.getById(productId));
     }
 
-    @PostMapping("{id}")
-    public ResponseEntity<Void> postMethodName(@PathVariable(name = "id") UUID productId,
+    @PostMapping("{id}/rate")
+    public ResponseEntity<Void> postMethodName(@PathVariable(name = "id") @Valid UUID productId,
             @RequestBody @Valid ProductRatingDto productRating) {
         useCases.rateProduct(productId, productRating);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 }

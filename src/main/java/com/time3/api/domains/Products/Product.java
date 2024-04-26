@@ -41,7 +41,7 @@ public class Product extends GenericSchema {
     private BigInteger ratingCount = BigInteger.ZERO;
 
     @Column(name = "url_image")
-    private String urlImage;
+    private String urlImage = "";
 
     public Product(String name, String description, BigInteger price, BigInteger stock, String urlImage) {
         super();
@@ -63,7 +63,10 @@ public class Product extends GenericSchema {
     }
 
     private Double calculateNewAverage(Double newRating) {
-        return this.rating * this.ratingCount.doubleValue()
-                + newRating / this.ratingCount.add(BigInteger.ONE).doubleValue();
+        BigInteger totalRatingCount = this.ratingCount.add(BigInteger.ONE);
+        Double totalSumRating = this.rating * this.ratingCount.doubleValue() + newRating;
+        Double newAverage = totalSumRating / totalRatingCount.doubleValue();
+
+        return newAverage > 5.0 ? 5.0 : newAverage;
     }
 }
