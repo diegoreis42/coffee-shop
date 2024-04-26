@@ -15,4 +15,10 @@ public class ProductException extends GlobalException {
         }
     }
 
+    public static class ProductNotFound extends ProductException {
+        public ProductNotFound() {
+            super("Produto não encontrado", HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
