@@ -1,6 +1,6 @@
 package com.time3.api.domains.Order;
 
-import com.time3.api.domains.Order.dtos.OrderDto;
+import com.time3.api.domains.ProductOrder.ProductOrder;
 import com.time3.api.domains.ProductOrder.dtos.ProductOrderDto;
 import com.time3.api.domains.Products.Product;
 import com.time3.api.domains.Products.ProductRepository;
@@ -10,9 +10,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 public class OrderUseCases {
@@ -26,21 +26,26 @@ public class OrderUseCases {
     private ProductRepository productRepository;
 
     @Transactional
-    public void create(OrderDto orderDto) {
-        User user = userRepository.findByEmail(orderDto.userEmail());
+    public void create(List<ProductOrderDto> productOrders, String userEmail) {
+        User user = userRepository.findByEmail(userEmail);
 
-        List<Product> products = 
+        List<ProductOrder> products = new ArrayList<>();
 
-        for( ProductOrderDto productOrder : orderDto.productOrders() ) {
+        for (ProductOrderDto productOrder : productOrders) {
             Optional<Product> product = productRepository.findById(productOrder.productId());
 
-            if( product.isPresent() ) {}
+            if (product.isPresent()) {
+                ProductOrder newProductOrder = new ProductOrder(
+                        productOrder.quantity(),
+                        productOrder.size(),
+                        product.get(),
+                        null);
 
+                products.add(newProductOrder);
+            }
         }
 
-
-
         repository
-                .save(new Order(user));
+                .save(new Order(user, products, "pending"));
     }
 }
