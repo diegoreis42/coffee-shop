@@ -11,5 +11,5 @@ public enum UserRolesEnum {
 
     UserRolesEnum(String role) {
         this.role = role;
-    }
+    }     
 }

@@ -35,13 +35,13 @@ public class ProductUseCasesTest {
     @BeforeEach
     void setUp() {
         productDto = new ProductDto("Café", "Um ótimo cafézinho", BigInteger.valueOf(19999),
-                BigInteger.valueOf(200));
+                BigInteger.valueOf(200), "https://www.cafezinho.com.br");
     }
 
     @Test
     void shouldThrowExceptionWhenProductAlreadyExists() {
         Product existingProduct = new Product("Café", "Um ótimo cafézinho", BigInteger.valueOf(1999),
-                BigInteger.valueOf(100));
+                BigInteger.valueOf(100), "https://www.cafezinho.com.br");
 
         when(repository.findByName("Café")).thenReturn(Optional.of(existingProduct));
 
@@ -55,7 +55,7 @@ public class ProductUseCasesTest {
     @Test
     void shouldSaveProductWhenNoExistingProductFound() {
         ProductDto productDto = new ProductDto("Cafézinho mineiro", "café top", BigInteger.valueOf(1999),
-                BigInteger.valueOf(100));
+                BigInteger.valueOf(100), "https://www.cafezinho.com.br");
 
         when(repository.findByName("Cafézinho mineiro")).thenReturn(Optional.empty());
 
@@ -70,6 +70,7 @@ public class ProductUseCasesTest {
         assertEquals("café top", savedProduct.getDescription());
         assertEquals(BigInteger.valueOf(1999), savedProduct.getPrice());
         assertEquals(BigInteger.valueOf(100), savedProduct.getStock());
+        assertEquals("https://www.cafezinho.com.br", savedProduct.getUrlImage());
     }
 
 }
