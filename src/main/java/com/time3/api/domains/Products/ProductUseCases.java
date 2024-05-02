@@ -16,41 +16,29 @@ import jakarta.transaction.Transactional;
 @Component
 public class ProductUseCases {
     @Autowired
-    private ProductRepository repository;
+    private ProductService service;
 
     @Transactional
     public void create(ProductDto productDto) {
-        repository.findByName(productDto.name()).ifPresent(product -> {
+        service.findByName(productDto.name()).ifPresent(product -> {
             throw new ProductException.ProductAlreadyExists();
         });
 
-        repository
-                .save(new Product(productDto.name(), productDto.description(), productDto.price(), productDto.stock(),
-                        productDto.urlImage()));
+        service.save(productDto);
     }
 
     public Page<ProductPresentationDto> getAll(PageRequest pageRequest) {
-        Page<Product> products = repository.findAll(pageRequest);
-
-        return products.map(
-                product -> new ProductPresentationDto(product.getId(), product.getName(), product.getDescription(),
-                        product.getPrice(),
-                        product.getStock(), product.getRating(), product.getRatingCount(), product.getUrlImage()));
+        return service.findAll(pageRequest);
     }
 
     public ProductPresentationDto getById(UUID productId) {
-        Product product = repository.findById(productId).orElseThrow(() -> new ProductException.ProductNotFound());
-
-        return new ProductPresentationDto(product.getId(), product.getName(), product.getDescription(),
-                product.getPrice(),
-                product.getStock(), product.getRating(), product.getRatingCount(), product.getUrlImage());
+        return service.findById(productId);
     }
 
     public void rateProduct(UUID productId, ProductRatingDto productRating) {
-        Product product = repository.findById(productId)
-                .orElseThrow(() -> new ProductException.ProductNotFound());
+        Product product = service.getById(productId);
 
         product.setRating(productRating.rating());
-        repository.save(product);
+        service.saveProduct(product);
     }
 }

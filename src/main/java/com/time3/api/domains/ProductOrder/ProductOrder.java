@@ -1,10 +1,18 @@
 package com.time3.api.domains.ProductOrder;
 
+import java.math.BigInteger;
+
 import com.time3.api.domains.Order.Order;
 import com.time3.api.domains.Products.Product;
 import com.time3.api.domains.Products.SizeEnum;
 import com.time3.api.shared.GenericSchema;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ProductOrder extends GenericSchema {
     @Column
-    private Integer quantity;
+    private BigInteger quantity;
 
     @Column
     private SizeEnum size;
