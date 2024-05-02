@@ -1,18 +1,23 @@
 package com.time3.api.domains.Order;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
+
 import com.time3.api.domains.ProductOrder.ProductOrder;
 import com.time3.api.domains.ProductOrder.dtos.ProductOrderDto;
 import com.time3.api.domains.Products.Product;
 import com.time3.api.domains.Products.ProductRepository;
 import com.time3.api.domains.User.User;
 import com.time3.api.domains.User.UserRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import jakarta.transaction.Transactional;
 
 @Component
 public class OrderUseCases {
@@ -47,5 +52,13 @@ public class OrderUseCases {
 
         repository
                 .save(new Order(user, products, "pending"));
+    }
+
+    public Page<Order> getAll(PageRequest page) {
+        return repository.findAll(page);
+    }
+
+    public Order getById(UUID id) {
+        return repository.findById(id).orElseThrow(() -> new OrderException.OrderNotFound());
     }
 }
