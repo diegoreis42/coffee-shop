@@ -23,5 +23,5 @@ public class Order extends GenericSchema {
     @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
     private List<ProductOrder> productOrders;
 
-    private String status;
+    private OrderStatusEnum status;
 }

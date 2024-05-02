@@ -39,7 +39,7 @@ public class ProductUseCases {
     }
 
     public ProductPresentationDto getById(UUID productId) {
-        Product product = repository.findById(productId).orElseThrow(() -> new ProductException.ProductNotFound());
+        Product product = repository.findById(productId).orElseThrow(() -> new ProductException.ProductNotFound(productId));
 
         return new ProductPresentationDto(product.getId(), product.getName(), product.getDescription(),
                 product.getPrice(),
@@ -48,7 +48,7 @@ public class ProductUseCases {
 
     public void rateProduct(UUID productId, ProductRatingDto productRating) {
         Product product = repository.findById(productId)
-                .orElseThrow(() -> new ProductException.ProductNotFound());
+                .orElseThrow(() -> new ProductException.ProductNotFound(productId));
 
         product.setRating(productRating.rating());
         repository.save(product);
