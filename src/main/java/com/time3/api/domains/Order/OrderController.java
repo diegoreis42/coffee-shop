@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.time3.api.configuration.SecurityFilter;
 import com.time3.api.configuration.TokenService;
+import com.time3.api.domains.Order.dtos.OrderDto;
 import com.time3.api.domains.ProductOrder.dtos.ProductOrderDto;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,15 +56,21 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Order>> getAll(
+    public ResponseEntity<Page<OrderDto>> getAll(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            HttpServletRequest request) {
+        String userEmail = tokenService.validateToken(
+                securityFilter.recoverToken(request));
 
-        return ResponseEntity.ok().body(orderUseCases.getAll(PageRequest.of(page, size)));
+        return ResponseEntity.ok().body(orderUseCases.getAll(PageRequest.of(page, size), userEmail));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Order> getById(@PathVariable("id") UUID id) {
-        return ResponseEntity.ok(orderUseCases.getById(id));
+    public ResponseEntity<OrderDto> getById(@PathVariable("id") UUID id, HttpServletRequest request) {
+        String userEmail = tokenService.validateToken(
+                securityFilter.recoverToken(request));
+
+        return ResponseEntity.ok(orderUseCases.getById(id, userEmail));
     }
 }

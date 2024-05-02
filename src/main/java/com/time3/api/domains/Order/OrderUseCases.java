@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import com.time3.api.domains.Order.dtos.OrderDto;
 import com.time3.api.domains.ProductOrder.ProductOrder;
 import com.time3.api.domains.ProductOrder.dtos.ProductOrderDto;
 import com.time3.api.domains.Products.Product;
@@ -27,7 +28,7 @@ import jakarta.transaction.Transactional;
 @Component
 public class OrderUseCases {
     @Autowired
-    private OrderRepository repository;
+    private OrderService orderService;
 
     @Autowired
     private UserRepository userRepository;
@@ -65,30 +66,34 @@ public class OrderUseCases {
             productOrdersToSave.add(newProductOrder);
         }
 
-        repository.save(new Order(user, productOrdersToSave, OrderStatusEnum.PENDING));
+        orderService.save(new Order(user, productOrdersToSave, OrderStatusEnum.PENDING));
     }
 
     private boolean isProductOutOfStock(BigInteger stock, BigInteger quantity) {
         return stock.compareTo(quantity) < 0;
     }
 
-    public Page<Order> getAll(PageRequest page) {
-        return repository.findAll(page);
+    public Page<OrderDto> getAll(PageRequest page, String userEmail) {
+        User userRef = userRepository.getReferenceByEmail(userEmail);
+
+        return orderService.findAllByUser(page, userRef);
     }
 
-    public Order getById(UUID id) {
-        return repository.findById(id).orElseThrow(() -> new OrderException.OrderNotFound());
+    public OrderDto getById(UUID id, String userEmail) {
+        User userRef = userRepository.getReferenceByEmail(userEmail);
+
+        return orderService.findByIdAndUser(id, userRef);
     }
 
     public void cancelOrder(UUID id, String userEmail) {
-        Order order = repository.findById(id).orElseThrow(() -> new OrderException.OrderNotFound());
+        Order order = orderService.findById(id);
 
         if (isOrderNotFromUser(order, userEmail)) {
             throw new OrderException.OrderNotFound();
         }
 
         order.setStatus(OrderStatusEnum.CANCELED);
-        repository.save(order);
+        orderService.save(order);
     }
 
     private boolean isOrderNotFromUser(Order order, String userEmail) {
