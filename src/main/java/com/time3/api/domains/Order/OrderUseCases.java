@@ -79,4 +79,19 @@ public class OrderUseCases {
     public Order getById(UUID id) {
         return repository.findById(id).orElseThrow(() -> new OrderException.OrderNotFound());
     }
+
+    public void cancelOrder(UUID id, String userEmail) {
+        Order order = repository.findById(id).orElseThrow(() -> new OrderException.OrderNotFound());
+
+        if (isOrderNotFromUser(order, userEmail)) {
+            throw new OrderException.OrderNotFound();
+        }
+
+        order.setStatus(OrderStatusEnum.CANCELED);
+        repository.save(order);
+    }
+
+    private boolean isOrderNotFromUser(Order order, String userEmail) {
+        return !order.getUser().getEmail().equals(userEmail);
+    }
 }
