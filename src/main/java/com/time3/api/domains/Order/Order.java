@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class Order extends GenericSchema {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -23,5 +25,5 @@ public class Order extends GenericSchema {
     @OneToMany(cascade = CascadeType.ALL,  fetch = FetchType.LAZY)
     private List<ProductOrder> productOrders;
 
-    private String status;
+    private OrderStatusEnum status;
 }

@@ -1,17 +1,25 @@
 package com.time3.api.domains.Order;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.time3.api.configuration.SecurityFilter;
 import com.time3.api.configuration.TokenService;
+import com.time3.api.domains.Order.dtos.OrderDto;
 import com.time3.api.domains.ProductOrder.dtos.ProductOrderDto;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,5 +44,33 @@ public class OrderController {
 
         orderUseCases.create(productOrders, userEmail);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<Void> cancelOrder(@PathVariable("id") UUID id, HttpServletRequest request) {
+        String userEmail = tokenService.validateToken(
+                securityFilter.recoverToken(request));
+
+        orderUseCases.cancelOrder(id, userEmail);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<OrderDto>> getAll(
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+            HttpServletRequest request) {
+        String userEmail = tokenService.validateToken(
+                securityFilter.recoverToken(request));
+
+        return ResponseEntity.ok().body(orderUseCases.getAll(PageRequest.of(page, size), userEmail));
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<OrderDto> getById(@PathVariable("id") UUID id, HttpServletRequest request) {
+        String userEmail = tokenService.validateToken(
+                securityFilter.recoverToken(request));
+
+        return ResponseEntity.ok(orderUseCases.getById(id, userEmail));
     }
 }
