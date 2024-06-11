@@ -14,7 +14,7 @@
 	<name>coffee-shop</name>
 	<description>Coffee shop for work project</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -65,6 +65,11 @@
       		<groupId>org.springframework.boot</groupId>
       		<artifactId>spring-boot-starter-validation</artifactId>
     	</dependency>
+		<dependency>
+      		<groupId>org.springdoc</groupId>
+      		<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      		<version>2.5.0</version>
+   		</dependency>
 	</dependencies>
 
 	<build>
